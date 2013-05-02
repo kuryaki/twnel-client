@@ -1,0 +1,35 @@
+{% load i18n %}
+{% load staticfiles %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <title>XMPP - Twnel client</title>
+</head>
+<body>
+    {{ result }}
+    <form action="/message">
+        <fieldset>
+            <legend> Send a message to a user in your network </legend>
+
+            <label for="server">Server</label>
+            <input id="server" type="text">
+
+            <label for="login">Login</label>
+            <input id="login" type="text">
+
+            <label for="password">Password</label>
+            <input type="password">
+
+            <label for="user">User</label>
+            <input type="text"> 
+
+            <label for="message">Message</label>
+            <textarea name="message" id="" cols="30" rows="10"></textarea>
+
+            <button type="submit" class="btn">Send</button>
+        </fieldset>
+    </form>
+</body>
+</html>
