@@ -8,29 +8,33 @@
     <title>XMPP - Twnel client</title>
 </head>
 <body>
-    {{ result }}
-    <form id="formMessage" action="/" method="POST">
-    {% csrf_token %}
-        <fieldset>
-            <legend> Send a message to a user in your network </legend>
+    <div class="container">
+        <div class="row">
+            <form id="formMessage" action="/" method="POST" class="well">
+            {% csrf_token %}
+                <fieldset>
+                    <legend> Send a message to a user in your network </legend>
 
-            <label for="server">Server</label>
-            <input name="server" id="server" type="text">
+                    <label for="server">XMPP Server</label>
+                    <input name="server" id="server" type="text" class="input-xlarge" placeholder="ex. http://ec2-50-19-51-82.compute-1.amazonaws.com/">
 
-            <label for="login">login</label>
-            <input name="login" id="login" type="text" autocomplete="off">
+                    <label for="login">From:</label>
+                    <input name="login" id="login" type="text" autocomplete="off" class="input-xlarge" placeholder="just the user">
 
-            <label for="password">Password</label>
-            <input name="password" id="password" type="password" autocomplete="off">
+                    <label for="password">Password</label>
+                    <input name="password" id="password" type="password" autocomplete="off" class="input-xlarge">
 
-            <label for="user">User</label>
-            <input name="user" id="user" type="text"> 
+                    <label for="user">To:</label>
+                    <input name="user" id="user" type="text" class="input-xlarge" placeholder="just the user"> 
 
-            <label for="message">Message</label>
-            <textarea name="message" id="message" cols="30" rows="10"></textarea>
-
-            <button type="submit" class="btn">Send</button>
-        </fieldset>
-    </form>
+                    <label for="message">Message</label>
+                    <textarea name="message" class="field input-xlarge" id="message"></textarea>
+                    
+                </fieldset>
+                <button type="submit" class="btn btn-large btn-info">Send</button>
+                <span class="label {{ display }}">{{ result }}</span>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

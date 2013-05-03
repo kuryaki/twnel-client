@@ -1,4 +1,3 @@
-# Create your views here.
 import sleekxmpp
 
 from django.shortcuts import render
@@ -16,10 +15,11 @@ def home(request):
 
         if xmpp.connect():
             xmpp.process(block=True)
-            return render(request, 'index.html', {'result': 'sep'})
+            return render(request, 'index.html', {'result': 'Message sent', 'display': 'label-success'})
         else:
-            return render(request, 'index.html', {'result': 'nope'})
-    return render(request, 'index.html', {'result': ''})
+            return render(request, 'index.html', {'result': 'Problems sending the message', 'display': 'label-important'})
+
+    return render(request, 'index.html', {'result': '', 'display': 'hide'})
 
 
 class SendMessage(sleekxmpp.ClientXMPP):
@@ -27,16 +27,9 @@ class SendMessage(sleekxmpp.ClientXMPP):
     def __init__(self, jid, password, recipient, message):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
-        # The message we wish to send, and the JID that
-        # will receive it.
         self.recipient = recipient
         self.msg = message
 
-        # The session_start event will be triggered when
-        # the bot establishes its connection with the server
-        # and the XML streams are ready for use. We want to
-        # listen for this event so that we we can initialize
-        # our roster.
         self.add_event_handler("session_start", self.start)
         self.register_plugin('xep_0030')
         self.register_plugin('xep_0199')
@@ -50,6 +43,4 @@ class SendMessage(sleekxmpp.ClientXMPP):
                           mbody=self.msg,
                           mtype='chat')
 
-        # Using wait=True ensures that the send queue will be
-        # emptied before ending the session.
         self.disconnect(wait=True)
