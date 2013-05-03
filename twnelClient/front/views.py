@@ -1,35 +1,28 @@
 # Create your views here.
-import logging
 import sleekxmpp
 
-from django.shortcuts import render_to_response
-
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)-8s %(message)s')
+from django.shortcuts import render
 
 
 def home(request):
-    return render_to_response('index.html', {'result': ''})
+    if(request.POST):
+
+        jid = '%s@%s' % (request.POST['login'], request.POST['server'])
+        password = request.POST['password']
+        to = '%s@%s' % (request.POST['user'], request.POST['server'])
+        message = request.POST['message']
+
+        xmpp = SendMessage(jid, password, to, message)
+
+        if xmpp.connect():
+            xmpp.process(block=True)
+            return render(request, 'index.html', {'result': 'sep'})
+        else:
+            return render(request, 'index.html', {'result': 'nope'})
+    return render(request, 'index.html', {'result': ''})
 
 
-def message(request):
-    # xmpp = SendMsgBot(request.jid, request.password, request.to, request.message)
-    # xmpp.register_plugin('xep_0030')
-    # xmpp.register_plugin('xep_0199')
-    # if xmpp.connect():
-
-    #     xmpp.process(block=True)
-    #     r`eturn render_to_response('index.html', {'result': 'sep'})
-    # else:
-    #     return render_to_response('index.html', {'result': 'nope'})
-    print request.POST
-    return render_to_response('index.html', {'result': request.REQUEST})
-
-
-class sendMessage(sleekxmpp.ClientXMPP):
-    """
-    A basic SleekXMPP bot that will log in, send a message,
-    and then log out.
-    """
+class SendMessage(sleekxmpp.ClientXMPP):
 
     def __init__(self, jid, password, recipient, message):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
@@ -45,20 +38,11 @@ class sendMessage(sleekxmpp.ClientXMPP):
         # listen for this event so that we we can initialize
         # our roster.
         self.add_event_handler("session_start", self.start)
+        self.register_plugin('xep_0030')
+        self.register_plugin('xep_0199')
 
     def start(self, event):
-        """
-        Process the session_start event.
 
-        Typical actions for the session_start event are
-        requesting the roster and broadcasting an initial
-        presence stanza.
-
-        Arguments:
-            event -- An empty dictionary. The session_start
-                     event does not provide any additional
-                     data.
-        """
         self.send_presence()
         self.get_roster()
 
