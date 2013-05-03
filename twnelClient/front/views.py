@@ -10,10 +10,12 @@ def home(request):
         password = request.POST['password']
         to = '%s@%s' % (request.POST['user'], request.POST['server'])
         message = request.POST['message']
+        server = (request.POST['server'], 5222)
 
-        xmpp = SendMessage(jid, password, to, message)
+        xmpp = Xmpp(jid, password)
 
-        if xmpp.connect():
+        if xmpp.connect(server):
+            xmpp.send_message(mto=to, mbody=message, mtype='chat')
             xmpp.process(block=True)
             return render(request, 'index.html', {'result': 'Message sent', 'display': 'label-success'})
         else:
@@ -22,13 +24,10 @@ def home(request):
     return render(request, 'index.html', {'result': '', 'display': 'hide'})
 
 
-class SendMessage(sleekxmpp.ClientXMPP):
+class Xmpp(sleekxmpp.ClientXMPP):
 
-    def __init__(self, jid, password, recipient, message):
+    def __init__(self, jid, password):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
-
-        self.recipient = recipient
-        self.msg = message
 
         self.add_event_handler("session_start", self.start)
         self.register_plugin('xep_0030')
@@ -38,9 +37,4 @@ class SendMessage(sleekxmpp.ClientXMPP):
 
         self.send_presence()
         self.get_roster()
-
-        self.send_message(mto=self.recipient,
-                          mbody=self.msg,
-                          mtype='chat')
-
         self.disconnect(wait=True)
