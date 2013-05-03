@@ -9,7 +9,8 @@
 </head>
 <body>
     {{ result }}
-    <form action="/message">
+    <form id="formMessage" action="/" method="POST">
+    {% csrf_token %}
         <fieldset>
             <legend> Send a message to a user in your network </legend>
 
@@ -20,13 +21,13 @@
             <input id="login" type="text">
 
             <label for="password">Password</label>
-            <input type="password">
+            <input id="password" type="password">
 
             <label for="user">User</label>
-            <input type="text"> 
+            <input id="user" type="text"> 
 
             <label for="message">Message</label>
-            <textarea name="message" id="" cols="30" rows="10"></textarea>
+            <textarea name="message" id="message" cols="30" rows="10"></textarea>
 
             <button type="submit" class="btn">Send</button>
         </fieldset>
